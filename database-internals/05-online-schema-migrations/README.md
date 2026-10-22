@@ -133,8 +133,8 @@ The copy stops at the `MAX(id)` noted at the start. Every row inserted after tha
 The swap is the delicate moment: no write may slip through unapplied. gh-ost does it like this:
 
 1. Create a **sentry table** `_orders_del` and `LOCK TABLES orders WRITE`. App writes now wait (they don't fail).
-2. From another connection, issue `RENAME TABLE orders TO _orders_del, _orders_gho TO orders`. It blocks on the lock.
-3. Write a marker into its changelog table and wait until it comes back through the binlog: everything before the lock has been applied.
+2. Write a marker into its changelog table and wait until it comes back through the binlog: everything before the lock has been applied.
+3. From another connection, issue `RENAME TABLE orders TO _orders_del, _orders_gho TO orders`. It blocks on the lock.
 4. Drop the sentry and unlock. MySQL runs the pending `RENAME` before the waiting writes, so they land on the new table.
 
 If gh-ost dies halfway, the lock is released and the `RENAME` fails because `_orders_del` still exists: the original table stays untouched.
@@ -161,9 +161,11 @@ A: Add it with `ALGORITHM=INSTANT` (nullable or with a default), then backfill i
 A: Triggers run inside every app transaction: extra latency, lock contention, and they can't be paused. Reading the binlog moves the work out of the write path.
 
 **Q: How does gh-ost swap the tables without losing writes?**
-A: It locks the original table, issues an atomic `RENAME`, waits until its own marker comes back through the binlog to know it has applied everything, then unlocks. A sentry table makes the `RENAME` fail safely if gh-ost dies.
+A: It locks the original table, waits until its own marker comes back through the binlog to know it has applied everything, issues an atomic `RENAME` (which blocks on the lock), then unlocks. A sentry table makes the `RENAME` fail safely if gh-ost dies.
 
 ## Further reading
+
+- Worked as an interview exercise: [Zero-downtime schema change](../../system-design/05-zero-downtime-schema-change/README.md)
 
 - [gh-ost: GitHub's online schema migration tool for MySQL](https://github.blog/news-insights/company-news/gh-ost-github-s-online-migration-tool-for-mysql/)
 - [gh-ost on GitHub](https://github.com/github/gh-ost)
