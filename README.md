@@ -9,7 +9,7 @@ What I learn about how software works underneath, written down so I can come bac
 | [Database internals](database-internals/README.md) | WAL, replication, storage engines, MVCC, CDC and Kafka, online schema migrations |
 | [Platform and infrastructure](platform-infra/README.md) | Container registries, GitOps from commit to pod, AWS regions, the path of a request, load balancers, ingress and egress, sidecars, CDNs |
 | [System design](system-design/README.md) | Large file ingestion, and the Atlassian case study: tenant routing, CQRS across regions, caching at scale |
-| [Security and networking](security-and-networking/README.md) | SSRF: DNS rebinding, checking the IP at dial time in Go, forward proxies and `CONNECT`, egress proxies |
+| [Security and networking](security-and-networking/README.md) | SSRF: DNS rebinding, checking the IP at dial time in Go, forward proxies and `CONNECT`, egress proxies. HTTPS: certificates, the TLS handshake, forward secrecy, where TLS ends |
 
 ## How each topic is organized
 
