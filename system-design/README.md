@@ -4,7 +4,7 @@ Design problems and real case studies, worked through with diagrams: what the co
 
 ## Learning path
 
-01 stands alone. 02-04 are one case study, Atlassian's tenant directory on AWS, split into three topics; read them in order.
+01 and 06 stand alone. 02-04 are one case study, Atlassian's tenant directory on AWS, split into three topics; read them in order.
 
 | # | Topic | You'll understand |
 |---|---|---|
@@ -12,6 +12,7 @@ Design problems and real case studies, worked through with diagrams: what the co
 | 02 | [Tenant routing](02-tenant-routing/README.md) | why stateless services need a directory, shards and DB-per-tenant, hash vs directory placement, the requirements of a lookup on every request |
 | 03 | [CQRS and multi-region replication](03-cqrs-multi-region/README.md) | a write side and a read side connected by streams, Kinesis vs SNS, what CQRS buys and costs |
 | 04 | [Caching at scale](04-caching-at-scale/README.md) | in-process caches with invalidation, the cache library and the p99, client-side caching, the four "not magic" lessons |
+| 06 | [Monitoring and alerting for thousands of services](06-monitoring-and-alerting/README.md) | series, samples and cardinality, SLOs for the monitor itself, pull locally and push centrally, Kafka as the durability layer, ingesters and S3, an alerts outbox, control plane vs data plane |
 
 The infrastructure side of the Atlassian case (DNS, load balancers, the ingress, sidecars) is in [platform-infra](../platform-infra/README.md).
 
@@ -22,6 +23,7 @@ The infrastructure side of the Atlassian case (DNS, load balancers, the ingress,
 - The ingestion pipeline bounds memory with fixed buffers and bounded queues, and separates read, process and write so each scales on its own.
 - The tenant directory separates the rare, must-be-correct writes from the constant, must-be-fast reads.
 - The caches separate the hot path (memory) from the slow path (the database), and the tail-latency fixes are about bounding the worst case, not improving the average.
+- The monitoring system bounds cardinality per team, retention and resolution, and separates the alerting path (four nines, nobody looking) from the dashboard path.
 
 ## Glossary
 
@@ -37,3 +39,8 @@ The infrastructure side of the Atlassian case (DNS, load balancers, the ingress,
 | p99 | The latency 99% of requests are faster than: the tail |
 | Cache stampede | Many concurrent misses for one key all hitting the backing store |
 | SLA | Service level agreement: what the provider promises (not necessarily what you need) |
+| SLO | Service level objective: the internal target (availability, latency or freshness) |
+| Series / sample | A metric name plus labels (one line on a graph) / one (timestamp, value) point of it |
+| Cardinality | How many series exist; every label multiplies it |
+| TSDB | Time-series database: appends points and reads recent ranges fast |
+| Outbox | A table used as a queue: rows carry state, workers claim them (SKIP LOCKED) and retry |
