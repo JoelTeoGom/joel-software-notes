@@ -4,7 +4,7 @@ How code becomes a running container, and how a request finds it: registries, Gi
 
 ## Learning path
 
-Read 01-02 for "how code gets deployed" and 03-08 for "how a request gets served". Each block builds on the previous topic.
+Read 01-02 for "how code gets deployed", 03-08 for "how a request gets served" and 09 for "how the infrastructure itself gets created". Each block builds on the previous topic.
 
 | # | Topic | You'll understand |
 |---|---|---|
@@ -16,6 +16,7 @@ Read 01-02 for "how code gets deployed" and 03-08 for "how a request gets served
 | 06 | [Ingress and egress](06-ingress-and-egress/README.md) | the Ingress object vs the controller, Gateway API, programming an ingress, when and how to control egress |
 | 07 | [Sidecars](07-sidecars/README.md) | why "the client" of a service is hard, what a sidecar is, library vs sidecar |
 | 08 | [CDN](08-cdn/README.md) | edge caches, hit vs miss, `Cache-Control`, the cache key, versioned assets vs invalidation |
+| 09 | [Terraform](09-terraform/README.md) | how Terraform talks to AWS, `plan` vs `apply`, modules, the state (backend, locking, secrets), environments, infra changes in a team vs GitOps |
 
 ## The one idea that connects everything
 
@@ -45,3 +46,7 @@ Understanding a system is mostly knowing what each layer can see.
 | Sidecar | A helper container next to the app, sharing its network |
 | CDN / PoP | Content delivery network / point of presence (an edge location) |
 | TTL | Time to live: how long a cached answer (DNS, HTTP) is valid |
+| IaC | Infrastructure as code: the infrastructure is described in files and created from them |
+| Terraform state | The file mapping each resource in the code to the real object, with its IDs |
+| Provider | The Terraform plugin that turns resources into API calls (for example `hashicorp/aws`) |
+| Drift | A difference between the real infrastructure and the code, usually from a manual change |
